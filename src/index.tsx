@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { createGlobalStyle } from "styled-components";
 import { Editor } from "./pages/editor";
 import { History } from "./pages/history";
+import { useStateWithStorage } from "./hooks/use_state_with_storage";
 import { 
   HashRouter as Router,
   Switch,
@@ -16,19 +17,32 @@ body * {
   box-sizing: border-box;
 }
 `
+const StorageKey= '/editor:text'
 
-const Main = (
-  <>
+const Main: React.FC = () => {
+  const [text, setText] = useStateWithStorage('', StorageKey)
+
+  return(
+    <>
     <GrobalStyle />
     <Router>
+      <Switch>
       <Route exact path={"/editor"}>
-        <Editor />
+        <Editor 
+          text={text}
+          setText={setText}
+          />
       </Route>
       <Route exact path={"/history"}>
-        <History />
+        <History 
+          setText={setText}
+        />
       </Route>
       <Redirect to="/editor" path="*"/>
+      </Switch>
     </Router>
   </>
-)
-render(Main, document.getElementById('app'))
+  )
+}
+
+render(<Main />, document.getElementById('app'))
